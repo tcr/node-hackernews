@@ -1,0 +1,16 @@
+{
+  "name": "node-hn",
+  "version": "0.0.1",
+  "description": "Hacker News scraping for Node.js",
+  "main": "hn.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "Tim Cameron Ryan",
+  "license": "MIT",
+  "dependencies": {
+    "scrapi": "0.0.6",
+    "async": "~0.1.22"
+  }
+}
