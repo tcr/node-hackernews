@@ -23,4 +23,4 @@ For the module:
 
 **hackernews.profile(username, callback(err, json))** &mdash; Profile of a user.
 
-**hackernews.login(username, password, callback(err, json))** &mdash; Login as a user.
+**hackernews.login(username, password, callback(err, userAPI))** &mdash; Login as a user. Returns a new authenticated API object with the same methods.

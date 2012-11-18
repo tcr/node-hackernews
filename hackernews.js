@@ -75,58 +75,55 @@ function paginate (i, next) {
   }
 }
 
-// List stories from a given page.
-var hnews = scrapi(manifest);
+function createAPI (hnews) {
+  return {
+    // Rankings
+    popular: function (i, next) {
+      if (!next) next = i, i = 0;
+      hnews('/').get(paginate(i, next));
+    },
+    newest: function (i, next) {
+      if (!next) next = i, i = 0;
+      hnews('newest').get(paginate(i, next));
+    },
 
-module.exports = {
-  popular: function (i, next) {
-    if (!next) {
-      next = i;
-      i = 0;
+    // Story and comments
+    story: function (id, i, next) {
+      if (!next) next = i, i = 0;
+      hnews('item', {id: id}).get(next);
+    },
+
+    // User
+    profile: function (user, next) {
+      hnews('user', {id: user}).get(next);
+    },
+    submitted: function (user, i, next) {
+      if (!next) next = i, i = 0;
+      hnews('submitted', {id: user}).get(paginate(i, next));
+    },
+    commented: function (user, i, next) {
+      if (!next) next = i, i = 0;
+      hnews('threads', {id: user}).get(paginate(i, next));
+    },
+
+    // Authentication
+    login: function (username, password, callback) {
+      // Create a new manifest to save our session.
+      var user = new scrapi(manifest);
+      user('newslogin').get(function (err, json) {
+        user('y').post({
+          u: username,
+          p: password,
+          fnid: json.fnid // unique key
+        }, function (err, json) {
+          callback(err, user);
+        })
+      });
     }
-    hnews('/').get(paginate(i, next));
-  },
-  newest: function (i, next) {
-    if (!next) {
-      next = i;
-      i = 0;
-    }
-    hnews('newest').get(paginate(i, next));
-  },
-  story: function (id, i, next) {
-    if (!next) {
-      next = i;
-      i = 0;
-    }
-    hnews('item', {id: id}).get(next);
-  },
-  profile: function (user, next) {
-    hnews('user', {id: user}).get(next);
-  },
-  submitted: function (user, i, next) {
-    if (!next) {
-      next = i;
-      i = 0;
-    }
-    hnews('submitted', {id: user}).get(paginate(i, next));
-  },
-  commented: function (user, i, next) {
-    if (!next) {
-      next = i;
-      i = 0;
-    }
-    hnews('threads', {id: user}).get(paginate(i, next));
-  },
-  login: function (username, password, callback) {
-    hnews('newslogin').get(function (err, json) {
-      hnews('y').post({
-        u: username,
-        p: password,
-        fnid: json.fnid
-      }, callback)
-    });
-  }
-};
+  };
+}
+
+module.exports = createAPI(scrapi(manifest));
 
 if (require.main === module) {
   var page = Number(process.argv[2]) - 1;
