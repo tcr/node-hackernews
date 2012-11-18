@@ -69,7 +69,7 @@ function paginate (i, next) {
 var hnews = scrapi(manifest);
 
 module.exports = {
-  home: function (i, next) {
+  popular: function (i, next) {
     hnews('/').get(paginate(i, next));
   },
   newest: function (next) {
@@ -91,7 +91,7 @@ module.exports = {
 
 if (require.main === module) {
   var page = Number(process.argv[2]);
-  module.exports.home(page || 1, function (err, json) {
+  module.exports.popular(page || 1, function (err, json) {
     json.stories.forEach(function (story, i) {
       console.log('[' + ('   ' + (i + 1)).substr(-2) + ']', story.title);
       console.log('    ', story.link)
