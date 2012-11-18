@@ -57,7 +57,7 @@ function paginate (i, next) {
     i = 0;
   }
   return function nextPage (err, json) {
-    if (json.next && i && i--) {
+    if (json.next && i--) {
       hnews(json.next).get(nextPage);
     } else {
       next(err, json);
@@ -70,28 +70,48 @@ var hnews = scrapi(manifest);
 
 module.exports = {
   popular: function (i, next) {
+    if (!next) {
+      next = i;
+      i = 0;
+    }
     hnews('/').get(paginate(i, next));
   },
-  newest: function (next) {
+  newest: function (i, next) {
+    if (!next) {
+      next = i;
+      i = 0;
+    }
     hnews('newest').get(paginate(i, next));
   },
-  submitted: function (user, next) {
-    hnews('submitted', {id: user}).get(paginate(i, next));
-  },
-  comments: function (user, next) {
-    hnews('threads', {id: user}).get(paginate(i, next));
+  story: function (id, i, next) {
+    if (!next) {
+      next = i;
+      i = 0;
+    }
+    hnews('item', {id: id}).get(next);
   },
   profile: function (user, next) {
     hnews('user', {id: user}).get(next);
   },
-  story: function (id, next) {
-    hnews('item', {id: id}).get(next);
+  submitted: function (user, i, next) {
+    if (!next) {
+      next = i;
+      i = 0;
+    }
+    hnews('submitted', {id: user}).get(paginate(i, next));
+  },
+  commented: function (user, i, next) {
+    if (!next) {
+      next = i;
+      i = 0;
+    }
+    hnews('threads', {id: user}).get(paginate(i, next));
   }
 };
 
 if (require.main === module) {
-  var page = Number(process.argv[2]);
-  module.exports.popular(page || 1, function (err, json) {
+  var page = Number(process.argv[2]) - 1;
+  module.exports.popular(page || 0, function (err, json) {
     json.stories.forEach(function (story, i) {
       console.log('[' + ('   ' + (i + 1)).substr(-2) + ']', story.title);
       console.log('    ', story.link)
