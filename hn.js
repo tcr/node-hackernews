@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var scrapi = require('scrapi');
 
 // Define a specification for scraping Hacker News

@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "Hacker News scraping for Node.js",
   "main": "hn.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "hn": "./hn.js"
   },
   "repository": "",
   "author": "Tim Cameron Ryan",
