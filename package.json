@@ -1,5 +1,5 @@
 {
-  "name": "node-hn",
+  "name": "hn",
   "version": "0.0.1",
   "description": "Hacker News scraping for Node.js",
   "main": "hn.js",

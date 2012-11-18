@@ -54,10 +54,29 @@ var manifest = {
 // List stories from a given page.
 var hnews = scrapi(manifest);
 
-module.exports = hnews;
+module.exports = {
+  home: function (next) {
+    hnews('/').get(next);
+  },
+  newest: function (next) {
+    hnews('newest').get(next);
+  },
+  profile: function (user, next) {
+    hnews('user', {id: user}).get(next);
+  },
+  story: function (id, next) {
+    hnews('item', {id: id}).get(next);
+  },
+  submitted: function (user, next) {
+    hnews('submitted', {id: user}).get(next);
+  },
+  comments: function (user, next) {
+    hnews('threads', {id: user}).get(next);
+  }
+};
 
 if (require.main === module) {
-  hnews('/').get(function (err, json) {
+  module.exports.home(function (err, json) {
     json.stories.forEach(function (story, i) {
       console.log('[' + (i + 1) + ']', story.title);
     });
