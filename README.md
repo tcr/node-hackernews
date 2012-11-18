@@ -2,7 +2,10 @@
 
 For the CLI program `hackernews`:
 
-`npm install -g hackernews`
+```
+npm install -g hackernews
+hackernews 4 # fourth page
+```
 
 For the module:
 
