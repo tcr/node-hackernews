@@ -1,10 +1,10 @@
 {
-  "name": "hn",
+  "name": "hackernews",
   "version": "0.0.1",
   "description": "Hacker News scraping for Node.js",
   "main": "hn.js",
   "bin": {
-    "hn": "./hn.js"
+    "hackernews": "./hn.js"
   },
   "repository": "",
   "author": "Tim Cameron Ryan",
