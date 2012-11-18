@@ -1,6 +1,6 @@
 {
   "name": "hackernews",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Hacker News scraping for Node.js",
   "main": "hn.js",
   "bin": {
