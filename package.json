@@ -4,6 +4,7 @@
   "description": "Hacker News scraping for Node.js",
   "main": "hackernews.js",
   "bin": {
+    "hn": "./hackernews.js",
     "hackernews": "./hackernews.js"
   },
   "repository": "",
