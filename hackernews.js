@@ -3,7 +3,7 @@
 var scrapi = require('scrapi');
 var colors = require('colors');
 
-// Define a specification for scraping Hacker News
+// Define a specification for scraping Hacker News using Scrapi.
 
 var manifest = {
   base: 'http://news.ycombinator.com',
@@ -62,6 +62,9 @@ var manifest = {
   }
 };
 
+// For pagination we'll have to recursively go through the "next"
+// link at the bottom. The format for this link is the same on each
+// scraped page, so we can abstract it.
 function paginate (hnews, i, next) {
   if (!next) {
     next = i;
@@ -76,6 +79,9 @@ function paginate (hnews, i, next) {
   }
 }
 
+// Create an API object around a Scrapi instance. Allows us to
+// create an anonymouse interface as the module, and allow logging
+// in with a specific username as well.
 function createAPI (hnews) {
   return {
     // Rankings
@@ -124,8 +130,11 @@ function createAPI (hnews) {
   };
 }
 
+// Default is anonymous access.
 module.exports = createAPI(scrapi(manifest));
 
+// The command line can be invoked by "hn [page]" where
+// page is optional, or a page number starting with 1.
 if (require.main === module) {
   var page = (Number(process.argv[2]) - 1) || 0;
   module.exports.popular(page, function (err, json) {
