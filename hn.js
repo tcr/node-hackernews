@@ -7,12 +7,12 @@ var scrapi = require('scrapi');
 var manifest = {
   base: 'http://news.ycombinator.com',
   spec: {
-    '/ submitted': {
+    '*': {
       stories: {
         $query: 'table table tr:nth-child(3n+1)',
         $each: {
-          title: '(text) td.title a',
-          link: '(attr href) td.title a',
+          title: '(text) td.title a:nth-child(1)',
+          link: '(attr href) td.title a:nth-child(1)',
           user: '(text) + tr a[href^=user]',
           comments_count: '(text ^\\d+) + tr a[href^=item]',
           id: '(attr href \\d+$) + tr a[href^=item]',
@@ -51,34 +51,50 @@ var manifest = {
   }
 };
 
+function paginate (i, next) {
+  if (!next) {
+    next = i;
+    i = 0;
+  }
+  return function nextPage (err, json) {
+    if (json.next && i && i--) {
+      hnews(json.next).get(nextPage);
+    } else {
+      next(err, json);
+    }
+  }
+}
+
 // List stories from a given page.
 var hnews = scrapi(manifest);
 
 module.exports = {
-  home: function (next) {
-    hnews('/').get(next);
+  home: function (i, next) {
+    hnews('/').get(paginate(i, next));
   },
   newest: function (next) {
-    hnews('newest').get(next);
+    hnews('newest').get(paginate(i, next));
+  },
+  submitted: function (user, next) {
+    hnews('submitted', {id: user}).get(paginate(i, next));
+  },
+  comments: function (user, next) {
+    hnews('threads', {id: user}).get(paginate(i, next));
   },
   profile: function (user, next) {
     hnews('user', {id: user}).get(next);
   },
   story: function (id, next) {
     hnews('item', {id: id}).get(next);
-  },
-  submitted: function (user, next) {
-    hnews('submitted', {id: user}).get(next);
-  },
-  comments: function (user, next) {
-    hnews('threads', {id: user}).get(next);
   }
 };
 
 if (require.main === module) {
-  module.exports.home(function (err, json) {
+  var page = Number(process.argv[2]);
+  module.exports.home(page || 1, function (err, json) {
     json.stories.forEach(function (story, i) {
-      console.log('[' + (i + 1) + ']', story.title);
+      console.log('[' + ('   ' + (i + 1)).substr(-2) + ']', story.title);
+      console.log('    ', story.link)
     });
   });
 }
