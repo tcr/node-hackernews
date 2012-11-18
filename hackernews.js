@@ -126,6 +126,14 @@ function createAPI (hnews) {
           callback(err, user);
         })
       });
+    },
+    comment: function (id, text, callback) {
+      hnews('item', {id: id}).get(function (err, json) {
+        hnews('r').post({
+          text: text,
+          fnid: json.fnid // unique key
+        }, callback);
+      });
     }
   };
 }
