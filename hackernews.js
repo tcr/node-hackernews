@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var scrapi = require('scrapi');
+var colors = require('colors');
 
 // Define a specification for scraping Hacker News
 
@@ -61,7 +62,7 @@ var manifest = {
   }
 };
 
-function paginate (i, next) {
+function paginate (hnews, i, next) {
   if (!next) {
     next = i;
     i = 0;
@@ -80,11 +81,11 @@ function createAPI (hnews) {
     // Rankings
     popular: function (i, next) {
       if (!next) next = i, i = 0;
-      hnews('/').get(paginate(i, next));
+      hnews('/').get(paginate(hnews, i, next));
     },
     newest: function (i, next) {
       if (!next) next = i, i = 0;
-      hnews('newest').get(paginate(i, next));
+      hnews('newest').get(paginate(hnews, i, next));
     },
 
     // Story and comments
@@ -99,11 +100,11 @@ function createAPI (hnews) {
     },
     submitted: function (user, i, next) {
       if (!next) next = i, i = 0;
-      hnews('submitted', {id: user}).get(paginate(i, next));
+      hnews('submitted', {id: user}).get(paginate(hnews, i, next));
     },
     commented: function (user, i, next) {
       if (!next) next = i, i = 0;
-      hnews('threads', {id: user}).get(paginate(i, next));
+      hnews('threads', {id: user}).get(paginate(hnews, i, next));
     },
 
     // Authentication
@@ -126,11 +127,11 @@ function createAPI (hnews) {
 module.exports = createAPI(scrapi(manifest));
 
 if (require.main === module) {
-  var page = Number(process.argv[2]) - 1;
-  module.exports.popular(page || 0, function (err, json) {
+  var page = (Number(process.argv[2]) - 1) || 0;
+  module.exports.popular(page, function (err, json) {
     json.stories.forEach(function (story, i) {
-      console.log('[' + ('   ' + (i + 1)).substr(-2) + ']', story.title);
-      console.log('    ', story.link)
+      console.log(('[' + ('   ' + (i + 1 + page*30)).substr(-2) + ']').yellow.underline, story.title.bold);
+      console.log(story.link.grey.italic)
     });
   });
 }
