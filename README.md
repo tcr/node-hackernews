@@ -11,14 +11,16 @@ For the module:
 
 `npm install hackernews`
 
-**hackernews.popular([pageNumber = 1,] callback(err, json))** Most popular stories.
+**hackernews.popular([pageNumber = 1,] callback(err, json))** &mdash; Most popular stories.
 
-**hackernews.newest([pageNumber = 1,] callback(err, json))** Newset submissions.
+**hackernews.newest([pageNumber = 1,] callback(err, json))** &mdash; Newset submissions.
 
-**hackernews.story(id, [pageNumber = 1,] callback(err, json))** Story and its comments.
+**hackernews.story(id, [pageNumber = 1,] callback(err, json))** &mdash; Story and its comments.
 
-**hackernews.submitted(username, [pageNumber = 1,] callback(err, json))** Stories submitted by a user.
+**hackernews.submitted(username, [pageNumber = 1,] callback(err, json))** &mdash; Stories submitted by a user.
 
-**hackernews.commented(username, [pageNumber = 1,] callback(err, json))** Comments by a user.
+**hackernews.commented(username, [pageNumber = 1,] callback(err, json))** &mdash; Comments by a user.
 
-**hackernews.profile(username, callback(err, json))** Profile of a user.
+**hackernews.profile(username, callback(err, json))** &mdash; Profile of a user.
+
+**hackernews.login(username, password, callback(err, json))** &mdash; Login as a user.

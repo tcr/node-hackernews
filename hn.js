@@ -8,6 +8,10 @@ var manifest = {
   base: 'http://news.ycombinator.com',
   spec: {
     '*': {
+      login: {
+        $query: 'td:nth-child(3) span.pagetop a[href^=user]',
+        $value: '(text)'
+      },
       stories: {
         $query: 'table table tr:nth-child(3n+1)',
         $each: {
@@ -47,6 +51,12 @@ var manifest = {
       karma: '(text) tr:nth-child(3) td:nth-child(2)',
       average_karma: '(text) tr:nth-child(4) td:nth-child(2)',
       about: '(text) tr:nth-child(5) td:nth-child(2)'
+    },
+    'newslogin': {
+      fnid: {
+        $query: 'input[name=fnid]',
+        $value: '(attr value)'
+      }
     }
   }
 };
@@ -106,6 +116,15 @@ module.exports = {
       i = 0;
     }
     hnews('threads', {id: user}).get(paginate(i, next));
+  },
+  login: function (username, password, callback) {
+    hnews('newslogin').get(function (err, json) {
+      hnews('y').post({
+        u: username,
+        p: password,
+        fnid: json.fnid
+      }, callback)
+    });
   }
 };
 
