@@ -1,26 +1,40 @@
 # node-hackernews
 
-For the CLI program `hackernews`:
+A Hacker News scraper/bot for Node.js. Drink responsibly.
 
-```
-npm install -g hackernews
-hackernews [4] # fourth page
-```
-
-For the module:
+## Module
 
 `npm install hackernews`
 
-**hackernews.popular([pageNumber = 1,] callback(err, json))** &mdash; Most popular stories.
+Methods:
 
-**hackernews.newest([pageNumber = 1,] callback(err, json))** &mdash; Newset submissions.
+* **hackernews.popular([pageNumber = 1,] callback(err, json))** &mdash; Most popular stories.
 
-**hackernews.story(id, [pageNumber = 1,] callback(err, json))** &mdash; Story and its comments.
+* **hackernews.newest([pageNumber = 1,] callback(err, json))** &mdash; Newset submissions.
 
-**hackernews.submitted(username, [pageNumber = 1,] callback(err, json))** &mdash; Stories submitted by a user.
+* **hackernews.story(id, [pageNumber = 1,] callback(err, json))** &mdash; Story and its comments.
 
-**hackernews.commented(username, [pageNumber = 1,] callback(err, json))** &mdash; Comments by a user.
+* **hackernews.submitted(username, [pageNumber = 1,] callback(err, json))** &mdash; Stories submitted by a user.
 
-**hackernews.profile(username, callback(err, json))** &mdash; Profile of a user.
+* **hackernews.commented(username, [pageNumber = 1,] callback(err, json))** &mdash; Comments by a user.
 
-**hackernews.login(username, password, callback(err, userAPI))** &mdash; Login as a user. Returns a new authenticated API object with the same methods.
+* **hackernews.profile(username, callback(err, json))** &mdash; Profile of a user.
+
+Authenticated calls require `login()`, which returns a new, authenticated API object to its callback.
+
+* **hackernews.login(username, password, callback(err, userAPI))** &mdash; Login as a user. Passes a new authenticated API object to the callback, with the above methods as well as:
+
+* **hackernews.upvote(id, callback(err, json))** &mdash; Upvote an item.
+
+* **hackernews.downvote(id, callback(err, json))** &mdash; Downvote an item.
+
+* **hackernews.comment(id, text, callback(err, json))** &mdash; Comment on a post.
+
+## CLI `hackernews` or `hn`
+
+```
+$ npm install -g hackernews
+$ hackernews
+$ hn # same thing
+$ hn 4 # page 4
+```

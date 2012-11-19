@@ -33,12 +33,16 @@ var manifest = {
     },
     'item': {
       story: '(html) table table:nth-child(1) tr:nth-child(4) td',
+      upvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=up_]',
+      upvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=down_]',
+      fnid: '(attr value) form[action=/r] input[name=fnid]',
       comments: {
         $query: 'tr tr tr',
         $each: {
           user: '(text) .comhead a',
           age: '(text \\b\\d+ \\S+ \\S+) .comhead',
           id: '(attr href \\d+$) .comhead a:nth-child(2)',
+          parent: '(attr href \\d+$) .comhead a:nth-child(3)',
           indent_width: '(attr width) > td:nth-child(1) img',
           text: '(html) .comment font',
           color: '(attr color) .comment font'
@@ -113,39 +117,50 @@ function createAPI (hnews) {
       hnews('threads', {id: user}).get(paginate(hnews, i, next));
     },
 
-    // Authentication
+    // Authenticated calls.
     login: function (username, password, callback) {
       // Create a new manifest to save our session.
-      var user = new scrapi(manifest);
+      var user = scrapi(manifest);
       user('newslogin').get(function (err, json) {
         user('y').post({
           u: username,
           p: password,
           fnid: json.fnid // unique key
         }, function (err, json) {
-          callback(err, user);
+          callback(err, createAPI(user));
         })
       });
     },
     comment: function (id, text, callback) {
       hnews('item', {id: id}).get(function (err, json) {
+        console.log(json);
         hnews('r').post({
           text: text,
           fnid: json.fnid // unique key
         }, callback);
+      });
+    },
+    upvote: function (id, callback) {
+      hnews('item', {id: id}).get(function (err, json) {
+        hnews(json.upvote).get(callback);
+      });
+    },
+    downvote: function (id, callback) {
+      hnews('item', {id: id}).get(function (err, json) {
+        hnews(json.downvote).get(callback);
       });
     }
   };
 }
 
 // Default is anonymous access.
-module.exports = createAPI(scrapi(manifest));
+var hackernews = module.exports = createAPI(scrapi(manifest));
 
 // The command line can be invoked by "hn [page]" where
 // page is optional, or a page number starting with 1.
 if (require.main === module) {
   var page = (Number(process.argv[2]) - 1) || 0;
-  module.exports.popular(page, function (err, json) {
+  hackernews.popular(page, function (err, json) {
     json.stories.forEach(function (story, i) {
       console.log(('[' + ('   ' + (i + 1 + page*30)).substr(-2) + ']').yellow.underline, story.title.bold);
       console.log(story.link.grey.italic)
