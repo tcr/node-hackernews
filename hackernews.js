@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 var scrapi = require('scrapi');
-var colors = require('colors');
+//var colors = require('colors');
 
 // Define a specification for scraping Hacker News using Scrapi.
 
 var manifest = {
-  base: 'http://news.ycombinator.com',
+  base: 'https://news.ycombinator.com',
   spec: {
     '*': {
       login: {
@@ -33,8 +33,15 @@ var manifest = {
     },
     'item': {
       story: '(html) table table:nth-child(1) tr:nth-child(4) td',
+      title: '(text) td.title a:nth-child(1)',
+      link: '(attr href) td.title a:nth-child(1)',
+      user: '(text) + tr a[href^=user]',
+      comments_count: '(text ^\\d+) + tr a[href^=item]',
+      id: '(attr href \\d+$) + tr a[href^=item]',
+      points: '(text ^\\d+) + tr td.subtext',
+      age: '(text \\d+ \\S+ ago) + tr td.subtext',
       upvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=up_]',
-      upvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=down_]',
+      downvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=down_]',
       fnid: '(attr value) form[action=/r] input[name=fnid]',
       comments: {
         $query: 'tr tr tr',
@@ -90,17 +97,17 @@ function createAPI (hnews) {
   return {
     // Rankings
     popular: function (i, next) {
-      if (!next) next = i, i = 0;
+      if (!next) next = i || 0;
       hnews('/').get(paginate(hnews, i, next));
     },
     newest: function (i, next) {
-      if (!next) next = i, i = 0;
+      if (!next) next = i || 0;
       hnews('newest').get(paginate(hnews, i, next));
     },
 
     // Story and comments
     story: function (id, i, next) {
-      if (!next) next = i, i = 0;
+      if (!next) next = i || 0;
       hnews('item', {id: id}).get(next);
     },
 
@@ -109,11 +116,11 @@ function createAPI (hnews) {
       hnews('user', {id: user}).get(next);
     },
     submitted: function (user, i, next) {
-      if (!next) next = i, i = 0;
+      if (!next) next = i || 0;
       hnews('submitted', {id: user}).get(paginate(hnews, i, next));
     },
     commented: function (user, i, next) {
-      if (!next) next = i, i = 0;
+      if (!next) next = i || 0;
       hnews('threads', {id: user}).get(paginate(hnews, i, next));
     },
 
