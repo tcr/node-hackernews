@@ -33,6 +33,13 @@ var manifest = {
     },
     'item': {
       story: '(html) table table:nth-child(1) tr:nth-child(4) td',
+      title: '(text) td.title a:nth-child(1)',
+      link: '(attr href) td.title a:nth-child(1)',
+      user: '(text) + tr a[href^=user]',
+      comments_count: '(text ^\\d+) + tr a[href^=item]',
+      id: '(attr href \\d+$) + tr a[href^=item]',
+      points: '(text ^\\d+) + tr td.subtext',
+      age: '(text \\d+ \\S+ ago) + tr td.subtext',
       upvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=up_]',
       downvote: '(attr href) center > table table:nth-child(1) td:nth-child(1) a[id^=down_]',
       fnid: '(attr value) form[action=/r] input[name=fnid]',
